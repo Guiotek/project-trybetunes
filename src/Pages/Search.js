@@ -88,15 +88,17 @@ export default class Search extends Component {
         }
         {
           notFound ? <h1>Nenhum álbum foi encontrado</h1> : musics.map((e) => (
-            <li
+            <div
               key={ e.collectionId }
             >
               {e.collectionName}
               <Link
                 to={ `/album/${e.collectionId}` }
                 data-testid={ `link-to-album-${e.collectionId}` }
-              />
-            </li>))
+              >
+                Album
+              </Link>
+            </div>))
         }
       </div>
     );
