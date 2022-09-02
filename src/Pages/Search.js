@@ -1,10 +1,16 @@
 import { Component } from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../Components/Header';
+import searchAlbumsAPI from '../services/searchAlbumsAPI';
 
 export default class Search extends Component {
   state = {
     isDisabled: true,
     search: '',
+    musics: [],
+    text: false,
+    notFound: false,
+    name: '',
   };
 
   onInputChange = ({ target }) => {
@@ -27,8 +33,28 @@ export default class Search extends Component {
     }
   };
 
+  searchAlbum = async () => {
+    const { search } = this.state;
+    const a = await searchAlbumsAPI(search);
+    console.log(a);
+    if (a.length === 0) {
+      this.setState({
+        notFound: true,
+        text: false,
+      });
+    } else {
+      this.setState({
+        musics: [...a],
+        text: true,
+        notFound: false,
+        name: search,
+        search: '',
+      });
+    }
+  };
+
   render() {
-    const { search, isDisabled } = this.state;
+    const { search, isDisabled, musics, text, notFound, name } = this.state;
     return (
       <div data-testid="page-search">
         <Header />
@@ -45,9 +71,33 @@ export default class Search extends Component {
           type="button"
           data-testid="search-artist-button"
           disabled={ isDisabled }
+          onClick={ this.searchAlbum }
         >
           Pesquisar
         </button>
+        {
+          (
+            text
+            && (
+              <h2>
+                Resultado de álbuns de:
+                {' '}
+                { name }
+              </h2>)
+          )
+        }
+        {
+          notFound ? <h1>Nenhum álbum foi encontrado</h1> : musics.map((e) => (
+            <li
+              key={ e.collectionId }
+            >
+              {e.collectionName}
+              <Link
+                to={ `/album/${e.collectionId}` }
+                data-testid={ `link-to-album-${e.collectionId}` }
+              />
+            </li>))
+        }
       </div>
     );
   }
