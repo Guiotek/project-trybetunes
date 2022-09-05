@@ -7,7 +7,7 @@ export default class Search extends Component {
   state = {
     isDisabled: true,
     search: '',
-    musics: [],
+    album: [],
     text: false,
     notFound: false,
     name: '',
@@ -36,7 +36,6 @@ export default class Search extends Component {
   searchAlbum = async () => {
     const { search } = this.state;
     const a = await searchAlbumsAPI(search);
-    console.log(a);
     if (a.length === 0) {
       this.setState({
         notFound: true,
@@ -44,7 +43,7 @@ export default class Search extends Component {
       });
     } else {
       this.setState({
-        musics: [...a],
+        album: [...a],
         text: true,
         notFound: false,
         name: search,
@@ -54,7 +53,7 @@ export default class Search extends Component {
   };
 
   render() {
-    const { search, isDisabled, musics, text, notFound, name } = this.state;
+    const { search, isDisabled, album, text, notFound, name } = this.state;
     return (
       <div data-testid="page-search">
         <Header />
@@ -87,7 +86,7 @@ export default class Search extends Component {
           )
         }
         {
-          notFound ? <h1>Nenhum álbum foi encontrado</h1> : musics.map((e) => (
+          notFound ? <h1>Nenhum álbum foi encontrado</h1> : album.map((e) => (
             <div
               key={ e.collectionId }
             >
