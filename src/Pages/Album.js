@@ -3,21 +3,31 @@ import PropTypes from 'prop-types';
 import Header from '../Components/Header';
 import getMusics from '../services/musicsAPI';
 import MusicCard from '../Components/MusicCard';
+import { getFavoriteSongs } from '../services/favoriteSongsAPI';
+import Loading from '../Components/Loading';
 
 export default class Album extends Component {
   state = {
     songs: [],
     artist: {},
+    loading: false,
+    favoritemusic: [],
   };
 
-  componentDidMount() {
-    this.onload();
+  async componentDidMount() {
+    this.music();
+    this.setState({
+      loading: true,
+    });
+    this.onLoad();
+    this.setState({
+      loading: false,
+    });
   }
 
   music = async () => {
     const { match: { params: { id } } } = this.props;
     const a = await getMusics(id);
-    console.log(a);
     this.setState({
       songs: [...a],
     }, () => {
@@ -28,12 +38,15 @@ export default class Album extends Component {
     });
   };
 
-  onload = () => {
-    this.music();
+  onLoad = async () => {
+    const a = await getFavoriteSongs();
+    this.setState({
+      favoritemusic: a,
+    });
   };
 
   render() {
-    const { songs, artist } = this.state;
+    const { songs, artist, loading, favoritemusic } = this.state;
     return (
       <div
         data-testid="page-album"
@@ -58,11 +71,14 @@ export default class Album extends Component {
                 trackName={ e.trackName }
                 previewUrl={ e.previewUrl }
                 eid={ e }
+                favoritemusic={ favoritemusic }
+                onLoad={ this.onLoad }
               />
             );
           }
           return null;
         })}
+        {loading && <Loading />}
       </div>
     );
   }

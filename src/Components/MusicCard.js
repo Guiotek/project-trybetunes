@@ -1,28 +1,52 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { addSong } from '../services/favoriteSongsAPI';
+import { getFavoriteSongs, addSong, removeSong } from '../services/favoriteSongsAPI';
 import Loading from './Loading';
 
 export default class MusicCard extends Component {
   state = {
     loading: false,
-    check: false,
+    favoritemusic: [],
   };
 
-  handleClick = async (param) => {
+  async componentDidMount() {
+    await this.onLoad();
+  }
+
+  handleClick = async ({ target }) => {
+    const { trackName, previewUrl, trackId } = this.props;
     this.setState({
       loading: true,
-      check: true,
     });
-    await addSong(param);
+    if (!target.checked) {
+      await removeSong({
+        trackName,
+        trackId,
+        previewUrl,
+      });
+    } else {
+      await addSong({
+        trackName,
+        trackId,
+        previewUrl,
+      });
+    }
+    await this.onLoad();
     this.setState({
       loading: false,
     });
   };
 
+  onLoad = async () => {
+    const a = await getFavoriteSongs();
+    this.setState({
+      favoritemusic: a,
+    });
+  };
+
   render() {
-    const { trackName, previewUrl, trackId, eid } = this.props;
-    const { loading, check } = this.state;
+    const { trackName, previewUrl, trackId } = this.props;
+    const { loading, favoritemusic } = this.state;
     return (
       <div>
         <p>
@@ -38,8 +62,8 @@ export default class MusicCard extends Component {
             type="checkbox"
             id="favorite"
             data-testid={ `checkbox-music-${trackId}` }
-            onClick={ () => this.handleClick(eid) }
-            checked={ !!check }
+            onChange={ this.handleClick }
+            checked={ favoritemusic.some((e) => e.trackId === trackId) }
           />
           Favorita
         </label>
