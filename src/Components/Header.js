@@ -2,6 +2,7 @@ import { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { getUser } from '../services/userAPI';
 import Loading from './Loading';
+import './Header.css';
 
 export default class Header extends Component {
   state = {
@@ -28,7 +29,7 @@ export default class Header extends Component {
   render() {
     const { loading, user } = this.state;
     return (
-      <header data-testid="header-component">
+      <header data-testid="header-component" className="Header">
         {
           (loading ? <Loading />
             : (

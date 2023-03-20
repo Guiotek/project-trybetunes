@@ -2,6 +2,7 @@ import { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { createUser } from '../services/userAPI';
 import Loading from '../Components/Loading';
+import './Login.css';
 
 class Login extends Component {
   state = {
@@ -47,7 +48,7 @@ class Login extends Component {
     const { name, isSaveButtonDisabled, loading, redirect } = this.state;
 
     return (
-      <div data-testid="page-login">
+      <div data-testid="page-login" className="login">
         {
           (redirect && <Redirect to="/search" />)
         }
